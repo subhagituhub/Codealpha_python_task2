@@ -2,48 +2,45 @@ class ExpenseTracker:
     def __init__(self):
         self.expenses = {}
 
-    def add_expense(self, category, amount):
+    def add_expense(self, date, amount, category):
         if category in self.expenses:
-            self.expenses[category] += amount
+            self.expenses[category].append(amount)
         else:
-            self.expenses[category] = amount
+            self.expenses[category] = [amount]
 
-    def print_summary(self):
-        print("Expense Summary:")
-        print("================")
-        total_expense = sum(self.expenses.values())
-        for category, amount in self.expenses.items():
-            print(f"{category}: ${amount:.2f}")
-        print("----------------")
-        print(f"Total Expense: ${total_expense:.2f}")
+    def total_expenses(self):
+        return sum(sum(expense) for expense in self.expenses.values())
 
+    def expenses_by_category(self):
+        return {category: sum(expense) for category, expense in self.expenses.items()}
+
+    def average_expense_per_category(self):
+        return {category: sum(expense) / len(expense) for category, expense in self.expenses.items()}
 
 def main():
-    tracker = ExpenseTracker()
+    expense_tracker = ExpenseTracker()
 
-    print("Welcome to Simple Expense Tracker!")
-
-    while True:
-        print("\nMenu:")
-        print("1. Add Expense")
-        print("2. Print Summary")
-        print("3. Exit")
-
-        choice = input("Enter your choice: ")
-
-        if choice == '1':
-            category = input("Enter expense category: ")
-            amount = float(input("Enter expense amount: "))
-            tracker.add_expense(category, amount)
-            print("Expense added successfully!")
-        elif choice == '2':
-            tracker.print_summary()
-        elif choice == '3':
-            print("Exiting...")
+    # Input expenses
+while True:
+        date = input("Enter date of the expense (or 'done' to finish): ")
+        if date.lower() == 'done':
             break
-        else:
-            print("Invalid choice. Please enter a valid option.")
+        amount = float(input("Enter amount of the expense: "))
+        category = input("Enter category of the expense: ")
+        expense_tracker.add_expense(date, amount, category)
 
+    # Display insights and summaries
+    print("\n--- Expense Tracker Summary ---")
+    print("Total Expenses: $", expense_tracker.total_expenses())
+    print("\nExpenses by Category:")
+    expenses_by_category = expense_tracker.expenses_by_category()
+    for category, amount in expenses_by_category.items():
+        print(f"{category}: ${amount}")
+    print("\nAverage Expense per Category:")
+    average_expense_per_category = expense_tracker.average_expense_per_category()
+    for category, average_amount in average_expense_per_category.items():
+        print(f"{category}: ${average_amount:.2f}")
 
 if __name__ == "__main__":
     main()
+       
